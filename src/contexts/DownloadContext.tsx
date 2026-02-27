@@ -509,9 +509,11 @@ export function DownloadProvider({ children }: { children: React.ReactNode }) {
   const cancelTask = useCallback((taskId: string) => {
     downloader.cancelTask(taskId);
     setTasks(downloader.getAllTasks());
+    // 保存任务状态到 IndexedDB（删除被取消的任务）
+    saveTasks(downloader.getAllTasks());
     // 取消任务后，尝试启动下一个等待的任务
     startNextPendingTask(downloader);
-  }, [downloader, startNextPendingTask]);
+  }, [downloader, startNextPendingTask, saveTasks]);
 
   const retryFailedSegments = useCallback((taskId: string) => {
     downloader.retryFailedSegments(taskId);
